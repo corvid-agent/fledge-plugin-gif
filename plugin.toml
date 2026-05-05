@@ -10,4 +10,4 @@ description = "Search, explore, and save GIFs"
 binary = "bin/fledge-gif"
 
 [hooks]
-build = "swift build -c release && mkdir -p bin && cp .build/release/fledge-plugin-gif bin/fledge-gif"
+build = "build.sh"
