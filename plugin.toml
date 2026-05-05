@@ -1,0 +1,10 @@
+[plugin]
+name = "fledge-plugin-gif"
+version = "0.1.0"
+description = "Search, explore, and save GIFs from the terminal"
+author = "corvid-agent"
+
+[[commands]]
+name = "gif"
+description = "Search, explore, and save GIFs"
+binary = "bin/fledge-gif"
