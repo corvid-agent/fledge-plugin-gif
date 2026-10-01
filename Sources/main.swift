@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import GifLib
 
 let args = Array(CommandLine.arguments.dropFirst())

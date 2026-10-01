@@ -1,7 +1,7 @@
 [plugin]
 name = "fledge-plugin-gif"
-version = "0.1.0"
-description = "Search, explore, and save GIFs from the terminal"
+version = "0.2.0"
+description = "Search, explore, and save GIFs (GIPHY Tenor-compat; needs GIPHY_API_KEY)"
 author = "corvid-agent"
 
 [[commands]]

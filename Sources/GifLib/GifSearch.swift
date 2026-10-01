@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 public struct GifResult: Codable, Equatable {
     public let id: String
@@ -88,9 +91,24 @@ public func removeSavedGif(name: String) throws -> Bool {
     return true
 }
 
-public func searchTenor(query: String, limit: Int = 8, apiKey: String = "AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ") throws -> [GifResult] {
+/// Resolve the API key: `GIPHY_API_KEY` first (GIPHY Tenor-compat), then `TENOR_API_KEY` as a legacy alias.
+/// Tenor's own API was discontinued 2026-06-30; this plugin now talks to `api.giphy.com` Tenor-compat.
+public func resolveGifApiKey() -> String? {
+    let env = ProcessInfo.processInfo.environment
+    for name in ["GIPHY_API_KEY", "TENOR_API_KEY"] {
+        if let v = env[name]?.trimmingCharacters(in: .whitespacesAndNewlines), !v.isEmpty {
+            return v
+        }
+    }
+    return nil
+}
+
+public func searchTenor(query: String, limit: Int = 8, apiKey: String? = nil) throws -> [GifResult] {
+    guard let apiKey = apiKey ?? resolveGifApiKey() else {
+        throw GifError.networkError("GIF search is not configured: set GIPHY_API_KEY (GIPHY Tenor-compatible API; Tenor shut down 2026-06-30)")
+    }
     let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
-    let urlString = "https://tenor.googleapis.com/v2/search?q=\(encoded)&key=\(apiKey)&limit=\(limit)&media_filter=gif,tinygif"
+    let urlString = "https://api.giphy.com/v2/search?q=\(encoded)&key=\(apiKey)&limit=\(limit)&media_filter=gif,tinygif&contentfilter=medium&client_key=fledge-plugin-gif"
 
     guard let url = URL(string: urlString) else {
         throw GifError.networkError("Invalid URL")
@@ -123,8 +141,11 @@ public func searchTenor(query: String, limit: Int = 8, apiKey: String = "AIzaSyA
     }
 }
 
-public func trendingTenor(limit: Int = 8, apiKey: String = "AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ") throws -> [GifResult] {
-    let urlString = "https://tenor.googleapis.com/v2/featured?key=\(apiKey)&limit=\(limit)&media_filter=gif,tinygif"
+public func trendingTenor(limit: Int = 8, apiKey: String? = nil) throws -> [GifResult] {
+    guard let apiKey = apiKey ?? resolveGifApiKey() else {
+        throw GifError.networkError("GIF search is not configured: set GIPHY_API_KEY (GIPHY Tenor-compatible API; Tenor shut down 2026-06-30)")
+    }
+    let urlString = "https://api.giphy.com/v2/featured?key=\(apiKey)&limit=\(limit)&media_filter=gif,tinygif&contentfilter=medium&client_key=fledge-plugin-gif"
 
     guard let url = URL(string: urlString) else {
         throw GifError.networkError("Invalid URL")

@@ -1,12 +1,26 @@
 # fledge-plugin-gif
 
-Search, explore, and save GIFs from the terminal. Powered by the Tenor API.
+Search, explore, and save GIFs from the terminal. Powered by GIPHY's Tenor-compatible API (Tenor itself shut down 2026-06-30).
 
 ## Install
 
 ```bash
 fledge plugins install corvid-agent/fledge-plugin-gif
 ```
+
+
+## Configuration
+
+Tenor's public API was discontinued on 2026-06-30. This plugin uses **GIPHY's Tenor-compatible** endpoints (`https://api.giphy.com/v2/...`) with `contentfilter=medium`.
+
+Set a GIPHY developer key in the environment (no default; never commit a key):
+
+```bash
+export GIPHY_API_KEY=…   # required
+# TENOR_API_KEY=…        # optional legacy alias; same GIPHY key
+```
+
+Get a key from the [GIPHY developer dashboard](https://developers.giphy.com/dashboard/). Attribution: Powered By GIPHY.
 
 ## Usage
 
